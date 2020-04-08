@@ -1,6 +1,6 @@
 <?php
 $adm = array('name' => 'Nome Sobrenome',
-			 'phone' => '(00) 91234-5678');
+	     'phone' => '(00) 91234-5678');
 
 $conn = new mysqli('localhost', 'root', 'passwd', 'monitor');
 $conn->set_charset('utf8');
