@@ -23,7 +23,6 @@ while ($row = $result->fetch_assoc()) {
 		}
 	}
 
-
 	$values = $data;
 
 	$countData = count($data);
@@ -34,7 +33,6 @@ while ($row = $result->fetch_assoc()) {
 	if ($countData > 1) {
 		$message = 'Olá '.$adm['name'].'! O servidor: '.$server.'. Precisa de atenção. Os serviços '.implode(', ', $values).' Pararam de funcionar.';
 	}
-
 	if (isset($data)) {
 		sendSms($adm['phone'], $message);
 	}
@@ -43,8 +41,8 @@ while ($row = $result->fetch_assoc()) {
 
 // Função para envio de SMS
 function sendSms($phone, $message) {
-	global $conn;
-	// Prepara o número e a mensagem
+    global $conn;
+    // Prepara o número e a mensagem
     $phone = '+55'.preg_replace('/[^0-9]/', NULL, $phone);
     $message = filter_var($message, FILTER_SANITIZE_STRING);
     if (strlen($message) > 160) {
@@ -52,7 +50,7 @@ function sendSms($phone, $message) {
     	return FALSE;
     }
 
-	/**
+    /**
     -- Envio de SMS utilizando o serviço da Standard Library
     -- Detalhes: https://stdlib.com/@utils/lib/sms
     **/
@@ -63,7 +61,6 @@ function sendSms($phone, $message) {
 
     curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($c, CURLOPT_POST, TRUE);
-
 
     // Você deve obter um token em: https://stdlib.com/@utils/lib/sms
     curl_setopt($c, CURLOPT_HTTPHEADER, array('Authorization: seu_token_aqui:123456789', 'Content-Type: application/json'));
