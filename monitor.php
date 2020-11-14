@@ -1,5 +1,5 @@
 <?php
-$adm = array('name' => 'Nome Sobrenome',
+$adm = array('name' => 'Maxmiler Freitas',
 	     'phone' => '(00) 91234-5678');
 
 $conn = new mysqli('localhost', 'root', 'passwd', 'monitor');
@@ -31,40 +31,48 @@ while ($row = $result->fetch_assoc()) {
 	
 	$message = 'Olá '.$adm['name'].'! O servidor: '.$server.'. Precisa de atenção. O serviço '.implode(', ', $values).' Parou de funcionar.';
 	if ($countData > 1) {
-		$message = 'Olá '.$adm['name'].'! O servidor: '.$server.'. Precisa de atenção. Os serviços '.implode(', ', $values).' Pararam de funcionar.';
+		$message = 'Olá '.$adm['name'].'! O servidor: '.$server.'. Precisa de atenção. Os serviços '.implode(', ', $values).' Pararam de funcionar.'.$adm['phone'];
 	}
 	if (isset($data)) {
-		sendSms($adm['phone'], $message);
+		sendWhatsappMessage($adm['phone'], $message);
 	}
 }
 
-
-// Função para envio de SMS
-function sendSms($phone, $message) {
-    global $conn;
-    // Prepara o número e a mensagem
-    $phone = '+55'.preg_replace('/[^0-9]/', NULL, $phone);
-    $message = filter_var($message, FILTER_SANITIZE_STRING);
-    if (strlen($message) > 160) {
-    	print 'A mensagem suporta no máximo 160 caracteres.';
-    	return FALSE;
+// Função para envio de mensagem no WhatsApp usando o serviço do CallMeBot
+function sendWhatsappMessage($phone, $message) {
+	global $conn;
+	if (strlen($message) > 500) {
+		print 'A mensagem não pode ter mais do que 500 caracteres.';
+    	return false;
     }
 
     /**
-    -- Envio de SMS utilizando o serviço da Standard Library
-    -- Detalhes: https://stdlib.com/@utils/lib/sms
+    -- Envio de Mensagem no WhatsApp utilizando o CallMeBot
+    -- Detalhes: https://www.callmebot.com/blog/free-api-whatsapp-messages/
     **/
 
-    $url = 'https://utils.api.stdlib.com/sms@1.0.11/';
-    $smsData = array('to' => $phone, 'body' => $message);
-    $c = curl_init($url);
+    // Prepara o número e a mensagem
+    $phone = '+55'.preg_replace('/[^0-9]/', NULL, $phone);
+    $message = str_replace(' ', '+', $message);
+    $message = filter_var($message, FILTER_SANITIZE_STRING);
+    $apikey = '000000'; // PEGUE SUA APIKEY NO SITE: http://callmebot.com
 
-    curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($c, CURLOPT_POST, TRUE);
+    $ch = curl_init();
+	// set url
+	curl_setopt($ch, CURLOPT_URL, 'https://api.callmebot.com/whatsapp.php?phone='.$phone.'&text='.$message.'&apikey='.$apikey);
 
-    // Você deve obter um token em: https://stdlib.com/@utils/lib/sms
-    curl_setopt($c, CURLOPT_HTTPHEADER, array('Authorization: seu_token_aqui:123456789', 'Content-Type: application/json'));
-    curl_setopt($c, CURLOPT_POSTFIELDS, json_encode($smsData));
-    $result = curl_exec($c);
+	//return the transfer as a string
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+	// $output contains the output string
+	//$output = curl_exec($ch);
+
+	if(curl_exec($ch) === false) {
+    	print 'Curl error: ' . curl_error($ch);
+	} else {
+		print 'Operation completed without any errors';
+	}
+
+	// close curl resource to free up system resources
+	curl_close($ch);
 }
-
