@@ -43,21 +43,21 @@ function sendWhatsappMessage($phone, $message) {
 	global $conn;
 	if (strlen($message) > 500) {
 		print 'A mensagem não pode ter mais do que 500 caracteres.';
-    	return false;
-    }
+		return false;
+	}
 
-    /**
-    -- Envio de Mensagem no WhatsApp utilizando o CallMeBot
-    -- Detalhes: https://www.callmebot.com/blog/free-api-whatsapp-messages/
-    **/
+	/**
+	-- Envio de Mensagem no WhatsApp utilizando o CallMeBot
+	-- Detalhes: https://www.callmebot.com/blog/free-api-whatsapp-messages/
+	**/
 
-    // Prepara o número e a mensagem
-    $phone = '+55'.preg_replace('/[^0-9]/', NULL, $phone);
-    $message = str_replace(' ', '+', $message);
-    $message = filter_var($message, FILTER_SANITIZE_STRING);
-    $apikey = '000000'; // PEGUE SUA APIKEY NO SITE: http://callmebot.com
+	// Prepara o número e a mensagem
+	$phone = '+55'.preg_replace('/[^0-9]/', NULL, $phone);
+	$message = str_replace(' ', '+', $message);
+	$message = filter_var($message, FILTER_SANITIZE_STRING);
+	$apikey = '000000'; // PEGUE SUA APIKEY NO SITE: http://callmebot.com
 
-    $ch = curl_init();
+	$ch = curl_init();
 	// set url
 	curl_setopt($ch, CURLOPT_URL, 'https://api.callmebot.com/whatsapp.php?phone='.$phone.'&text='.$message.'&apikey='.$apikey);
 
@@ -68,7 +68,7 @@ function sendWhatsappMessage($phone, $message) {
 	//$output = curl_exec($ch);
 
 	if(curl_exec($ch) === false) {
-    	print 'Curl error: ' . curl_error($ch);
+		print 'Curl error: ' . curl_error($ch);
 	} else {
 		print 'Operation completed without any errors';
 	}
